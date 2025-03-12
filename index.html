@@ -1481,6 +1481,19 @@
         function toggleCalendar() {
             const calendar = document.getElementById('calendar');
             calendar.classList.toggle('show');
+            if (calendar.classList.contains('show')) {
+                updateCalendar();
+            }
+        }
+
+        function previousMonth() {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            updateCalendar();
+        }
+
+        function nextMonth() {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            updateCalendar();
         }
         
         function selectDate(day, month, year) {
