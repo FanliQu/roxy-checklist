@@ -1008,7 +1008,7 @@
         // Register Service Worker
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/roxy-checklist/sw.js')
+                navigator.serviceWorker.register('./sw.js')
                     .then(registration => {
                         console.log('ServiceWorker registration successful');
                     })
@@ -1117,7 +1117,7 @@
 
         function generateEmojiPicker() {
             const emojiPicker = document.getElementById('emojiPicker');
-            const commonEmojis = ['📖', '✏️', '🎹', '🧹', '🛒', '🚴', '🏃', '🏊', '🎨', '🎮', '🎵', '🎸', '🎯', '🎪', '🎭', '🎪', '🎨', '🎭', '🎪', '🎯', '🎮', '🎲', '🎯', '🎪', '🎭', '🎨', '🎪', '🎯', '🎮', '🎲', '🎯', '🎪'];
+            const commonEmojis = ['📖', '✏️', '🎹', '🧹', '🛒', '🚴', '🏃', '🏊', '🎨', '🎮', '🎵', '🎸', '🎯', '🎪', '🎪', '🎨', '🎭', '🎪', '🎯', '🎮', '🎲', '🎯', '🎪', '🎭', '🎨', '🎪', '🎯', '🎮', '🎲', '🎯', '🎪'];
             emojiPicker.innerHTML = commonEmojis.map(emoji => `
                 <div class="emoji-option" onclick="selectEmoji('${emoji}')">${emoji}</div>
             `).join('');

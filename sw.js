@@ -1,10 +1,10 @@
 const CACHE_NAME = 'roxy-checklist-v1';
 const urlsToCache = [
-    '/roxy-checklist/',
-    '/roxy-checklist/index.html',
-    '/roxy-checklist/manifest.json',
-    '/roxy-checklist/icon-192x192.png',
-    '/roxy-checklist/icon-512x512.png'
+    './',
+    './index.html',
+    './manifest.json',
+    './icon-192x192.png',
+    './icon-512x512.png'
 ];
 
 self.addEventListener('install', event => {
@@ -33,4 +33,4 @@ self.addEventListener('activate', event => {
             );
         })
     );
-});
+}); 
