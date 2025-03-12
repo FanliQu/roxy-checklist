@@ -1355,29 +1355,35 @@
             if (confirm('确定要重置本周的进度吗？/ Are you sure you want to reset this week?')) {
                 const progress = JSON.parse(localStorage.getItem('weeklyProgress') || '{"tasks":{},"stickers":{}}');
                 
-                // Only reset tasks for current day, keep stickers
-                if (progress.tasks[currentDay]) {
-                    progress.tasks[currentDay] = progress.tasks[currentDay].map(() => false);
+                // Reset all tasks and stickers for the current week
+                for (let i = 0; i < 7; i++) {
+                    const dayTasks = i < 5 ? tasks.weekday : tasks.weekend;
+                    const allTasks = [...dayTasks, ...customTasks];
+                    progress.tasks[i] = new Array(allTasks.length).fill(false);
+                    progress.stickers[i] = new Array(allTasks.length).fill(false);
                 }
                 
                 // Save the updated progress
                 localStorage.setItem('weeklyProgress', JSON.stringify(progress));
                 
-                // Update UI for current day
-                document.querySelectorAll(`.task[data-day="${currentDay}"] .taskDone`)
-                    .forEach(cb => cb.checked = false);
-                document.querySelectorAll(`.task[data-day="${currentDay}"]`).forEach(task => 
-                    task.classList.remove('completed'));
+                // Update UI for all days
+                for (let i = 0; i < 7; i++) {
+                    showDay(i);
+                }
+                
+                // Show current day again
+                showDay(currentDay);
                 
                 // Update progress display
                 updateProgress();
                 
+                // Add haptic feedback if available
                 if (navigator.vibrate) {
                     navigator.vibrate([50, 50, 50]);
                 }
             }
         }
-
+// ... existing code ...
         // Add Calendar Functions
         let currentDate = new Date();
         
