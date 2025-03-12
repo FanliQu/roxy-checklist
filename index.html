@@ -485,6 +485,8 @@
             max-width: 500px;
             position: relative;
             border: 3px solid var(--secondary-color);
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         .close-button {
@@ -496,6 +498,14 @@
             font-size: 24px;
             cursor: pointer;
             color: var(--primary-color);
+            z-index: 1001;
+            padding: 5px 10px;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+
+        .close-button:hover {
+            background: var(--card-bg);
         }
 
         .emoji-picker {
@@ -892,6 +902,15 @@
         .calendar-date.has-todo.completed::before {
             content: '✅';
         }
+
+        /* Remove weekly summary styles */
+        .summary-card,
+        .summary-header,
+        .task-stats,
+        .stat-item,
+        .sticker-count {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -900,7 +919,6 @@
         
         <div class="nav-buttons">
             <button class="nav-button" onclick="showCustomTaskModal()">添加新任务 / Add Task</button>
-            <button class="nav-button" onclick="toggleWeeklySummary()">周汇总 / Weekly Summary</button>
             <button class="nav-button" onclick="toggleCalendar()">月视图 / Month View</button>
             <button class="nav-button" onclick="showTodoModal()">待办事项 / Todo List</button>
         </div>
@@ -962,17 +980,6 @@
         </div>
     </div>
 
-    <!-- Weekly Summary -->
-    <div class="modal" id="weeklySummaryModal">
-        <div class="modal-content">
-            <button class="close-button" onclick="hideWeeklySummary()">×</button>
-            <h3>本周汇总 / Weekly Summary</h3>
-            <div id="weeklySummaryContent">
-                <!-- Weekly summary will be generated here -->
-            </div>
-        </div>
-    </div>
-
     <!-- Add Todo List Modal -->
     <div class="modal" id="todoModal">
         <div class="modal-content">
@@ -1000,6 +1007,17 @@
             </div>
             <div class="todo-list" id="todoList">
                 <!-- Todo items will be generated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Weekly Summary -->
+    <div class="modal" id="weeklySummaryModal">
+        <div class="modal-content">
+            <button class="close-button" onclick="hideWeeklySummary()">×</button>
+            <h3>本周汇总 / Weekly Summary</h3>
+            <div id="weeklySummaryContent">
+                <!-- Weekly summary will be generated here -->
             </div>
         </div>
     </div>
@@ -1166,68 +1184,6 @@
             showDay(currentDay);
         }
 
-        function toggleWeeklySummary() {
-            const modal = document.getElementById('weeklySummaryModal');
-            if (modal.style.display === 'flex') {
-                hideWeeklySummary();
-            } else {
-                showWeeklySummary();
-            }
-        }
-
-        function showWeeklySummary() {
-            const modal = document.getElementById('weeklySummaryModal');
-            const content = document.getElementById('weeklySummaryContent');
-            
-            let summary = '';
-            for (let i = 0; i < 7; i++) {
-                const dayTasks = i < 5 ? tasks.weekday : tasks.weekend;
-                const allTasks = [...dayTasks, ...customTasks];
-                const completedTasks = getCompletedTasksForDay(i);
-                const dayStickers = getStickersForDay(i);
-                
-                summary += `
-                    <div class="summary-card">
-                        <div class="summary-header">
-                            <h4>${days[i]}</h4>
-                            <span>${completedTasks.length}/${allTasks.length} 完成</span>
-                        </div>
-                        <div class="task-stats">
-                            ${completedTasks.map(task => `
-                                <div class="stat-item">${task.icon} ${task.name}</div>
-                            `).join('')}
-                        </div>
-                        <div class="sticker-count">
-                            获得贴纸: ${dayStickers} 🌟
-                        </div>
-                    </div>
-                `;
-            }
-            
-            content.innerHTML = summary;
-            modal.style.display = 'flex';
-        }
-
-        function hideWeeklySummary() {
-            document.getElementById('weeklySummaryModal').style.display = 'none';
-        }
-
-        function getCompletedTasksForDay(dayIndex) {
-            const progress = JSON.parse(localStorage.getItem('weeklyProgress') || '{"tasks":{},"stickers":{}}');
-            const dayTasks = dayIndex < 5 ? tasks.weekday : tasks.weekend;
-            const allTasks = [...dayTasks, ...customTasks];
-            
-            if (!progress.tasks[dayIndex]) return [];
-            
-            return allTasks.filter((_, index) => progress.tasks[dayIndex][index]);
-        }
-
-        function getStickersForDay(dayIndex) {
-            const progress = JSON.parse(localStorage.getItem('weeklyProgress') || '{"tasks":{},"stickers":{}}');
-            if (!progress.stickers[dayIndex]) return 0;
-            return progress.stickers[dayIndex].filter(sticker => sticker).length;
-        }
-
         function setupTouchFeedback() {
             document.querySelectorAll('.task').forEach(task => {
                 task.addEventListener('touchstart', () => {
@@ -1383,7 +1339,7 @@
                 }
             }
         }
-// ... existing code ...
+
         // Add Calendar Functions
         let currentDate = new Date();
         
@@ -1572,80 +1528,6 @@
                 day: 'numeric'
             });
         }
-
-        // Update calendar to show todos
-        function updateCalendar() {
-            const year = currentDate.getFullYear();
-            const month = currentDate.getMonth();
-            
-            // Update month display
-            const monthNames = ["January", "February", "March", "April", "May", "June",
-                              "July", "August", "September", "October", "November", "December"];
-            document.getElementById('currentMonth').textContent = `${monthNames[month]} ${year}`;
-            
-            // Generate calendar grid
-            const firstDay = new Date(year, month, 1);
-            const lastDay = new Date(year, month + 1, 0);
-            const startingDay = firstDay.getDay();
-            const totalDays = lastDay.getDate();
-            
-            // Generate weekday headers
-            const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-            let calendarHTML = weekdays.map(day => 
-                `<div class="calendar-weekday">${day}</div>`
-            ).join('');
-            
-            // Add empty cells for days before the first of the month
-            for (let i = 0; i < startingDay; i++) {
-                calendarHTML += '<div class="calendar-date"></div>';
-            }
-            
-            // Add days of the month
-            const today = new Date();
-            const progress = JSON.parse(localStorage.getItem('weeklyProgress') || '{"tasks":{},"stickers":{}}');
-            
-            for (let day = 1; day <= totalDays; day++) {
-                const date = new Date(year, month, day);
-                const dateString = date.toISOString().split('T')[0];
-                const dayOfWeek = date.getDay();
-                const isToday = date.toDateString() === today.toDateString();
-                const dayIndex = (dayOfWeek + 6) % 7; // Convert to Monday-based index
-                
-                const hasCompleted = progress.tasks[dayIndex] && 
-                                   progress.tasks[dayIndex].some(task => task);
-                
-                const dayTodos = todos.filter(todo => todo.date === dateString);
-                const hasTodo = dayTodos.length > 0;
-                const allTodosCompleted = hasTodo && dayTodos.every(todo => todo.completed);
-                
-                const classes = [
-                    'calendar-date',
-                    isToday ? 'today' : '',
-                    hasCompleted ? 'has-completed' : '',
-                    hasTodo ? 'has-todo' : '',
-                    allTodosCompleted ? 'completed' : ''
-                ].filter(Boolean).join(' ');
-                
-                calendarHTML += `
-                    <div class="${classes}" onclick="selectDate(${day}, ${month}, ${year})">
-                        ${day}
-                    </div>`;
-            }
-            
-            document.getElementById('calendarGrid').innerHTML = calendarHTML;
-        }
-
-        // Add keyboard support for todo input
-        document.addEventListener('DOMContentLoaded', () => {
-            const todoInput = document.getElementById('todoInput');
-            if (todoInput) {
-                todoInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') {
-                        addTodo();
-                    }
-                });
-            }
-        });
 
         // Initialize the app
         initializeApp();
