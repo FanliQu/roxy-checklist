@@ -33,4 +33,4 @@ self.addEventListener('activate', event => {
             );
         })
     );
-}); 
+});
