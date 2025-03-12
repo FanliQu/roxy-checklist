@@ -1,0 +1,1600 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#FFB6C1">
+    <title>Roxy的每周打卡清单</title>
+    <link rel="apple-touch-icon" href="icon-192x192.png">
+    <link rel="manifest" href="manifest.json">
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #FF69B4;
+            --secondary-color: #FFB6C1;
+            --bg-color: #FFF0F5;
+            --card-bg: #FFE4E1;
+            --text-color: #4A4A4A;
+            --shadow: 0 4px 8px rgba(255, 105, 180, 0.2);
+            --safe-area-inset-top: env(safe-area-inset-top);
+            --safe-area-inset-bottom: env(safe-area-inset-bottom);
+            --transition-speed: 0.2s;
+            --scale-factor: 0.98;
+        }
+
+        * {
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+
+        body {
+            font-family: 'Comic Neue', cursive;
+            text-align: center;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            padding-top: var(--safe-area-inset-top);
+            padding-bottom: var(--safe-area-inset-bottom);
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(255, 182, 193, 0.2) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(255, 105, 180, 0.2) 0%, transparent 20%);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 25px;
+            box-shadow: var(--shadow);
+            margin-top: 20px;
+            margin-bottom: 20px;
+            border: 3px solid var(--secondary-color);
+            position: relative;
+        }
+
+        .container::before {
+            content: '✨';
+            position: absolute;
+            top: -15px;
+            left: -15px;
+            font-size: 24px;
+            animation: sparkle 2s infinite;
+        }
+
+        .container::after {
+            content: '✨';
+            position: absolute;
+            bottom: -15px;
+            right: -15px;
+            font-size: 24px;
+            animation: sparkle 2s infinite 1s;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+        }
+
+        h2 {
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            font-size: 28px;
+            line-height: 1.4;
+            text-shadow: 2px 2px 4px rgba(255, 105, 180, 0.2);
+            position: relative;
+            display: inline-block;
+        }
+
+        h2::before, h2::after {
+            content: '🎀';
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 24px;
+        }
+
+        h2::before {
+            left: -30px;
+        }
+
+        h2::after {
+            right: -30px;
+        }
+
+        .day {
+            margin: 20px 0;
+            padding: 20px;
+            background: var(--card-bg);
+            border-radius: 20px;
+            transition: transform var(--transition-speed) ease;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+            border: 2px dashed var(--primary-color);
+            position: relative;
+            contain: content;
+        }
+
+        .day h3 {
+            color: var(--primary-color);
+            font-size: 22px;
+            margin-bottom: 15px;
+            text-shadow: 1px 1px 2px rgba(255, 105, 180, 0.2);
+        }
+
+        .day:active {
+            transform: scale(var(--scale-factor));
+        }
+
+        .task {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 18px;
+            margin: 12px 0;
+            padding: 15px;
+            border-radius: 15px;
+            background: white;
+            box-shadow: 2px 2px 5px rgba(255, 105, 180, 0.1);
+            transition: transform var(--transition-speed) ease;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid transparent;
+            contain: content;
+        }
+
+        .task:active {
+            background: #FFF0F5;
+            border-color: var(--secondary-color);
+            transform: translateZ(0);
+        }
+
+        .task.completed {
+            background: #E8F5E9;
+            border-color: #81C784;
+        }
+
+        .task span {
+            flex: 1;
+            text-align: left;
+            margin-left: 10px;
+            font-size: 16px;
+        }
+
+        input[type="checkbox"] {
+            transform: scale(1.5);
+            cursor: pointer;
+            width: 24px;
+            height: 24px;
+            margin: 0 10px;
+            -webkit-appearance: none;
+            appearance: none;
+            border: 2px solid var(--primary-color);
+            border-radius: 50%;
+            outline: none;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        input[type="checkbox"]:checked {
+            background-color: var(--primary-color);
+            animation: checkmark 0.3s ease-in-out;
+        }
+
+        @keyframes checkmark {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        input[type="checkbox"]:checked::after {
+            content: '✓';
+            position: absolute;
+            color: white;
+            font-size: 16px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .summary {
+            margin-top: 30px;
+            padding: 20px;
+            font-size: 22px;
+            color: var(--primary-color);
+            background: var(--card-bg);
+            border-radius: 20px;
+            position: sticky;
+            bottom: 20px;
+            z-index: 100;
+            border: 2px solid var(--secondary-color);
+            box-shadow: 0 4px 8px rgba(255, 105, 180, 0.2);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 24px;
+            background: white;
+            border-radius: 12px;
+            margin: 15px 0;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(255, 105, 180, 0.2);
+            border: 2px solid var(--secondary-color);
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            transition: width 0.3s ease;
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress::after {
+            content: '✨';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 12px;
+            animation: sparkle 1s infinite;
+        }
+
+        .reset-button {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 18px;
+            margin-top: 20px;
+            transition: transform var(--transition-speed) ease;
+            -webkit-tap-highlight-color: transparent;
+            width: 80%;
+            max-width: 300px;
+            box-shadow: 0 4px 6px rgba(255, 105, 180, 0.3);
+            font-family: 'Comic Neue', cursive;
+            position: relative;
+            overflow: hidden;
+            contain: content;
+        }
+
+        .reset-button:active {
+            transform: scale(var(--scale-factor));
+            box-shadow: 0 2px 4px rgba(255, 105, 180, 0.2);
+        }
+
+        .reset-button::before {
+            content: '🎀';
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .reset-button::after {
+            content: '🎀';
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                padding: 15px;
+                margin: 10px auto;
+            }
+
+            .task {
+                font-size: 16px;
+                padding: 12px;
+            }
+
+            .summary {
+                font-size: 18px;
+                padding: 15px;
+            }
+
+            h2 {
+                font-size: 24px;
+            }
+        }
+
+        /* iPad specific styles */
+        @media (min-width: 768px) and (max-width: 1024px) {
+            .container {
+                width: 90%;
+                max-width: 1200px;
+                margin: 20px auto;
+                padding: 25px;
+            }
+
+            .nav-buttons {
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+
+            .nav-button {
+                flex: 1 1 calc(33.333% - 10px);
+                min-width: 200px;
+                font-size: 18px;
+                padding: 12px 20px;
+            }
+
+            .day {
+                margin: 25px 0;
+                padding: 25px;
+            }
+
+            .task {
+                font-size: 18px;
+                padding: 18px;
+                margin: 15px 0;
+            }
+
+            .summary {
+                font-size: 20px;
+                padding: 25px;
+                margin-top: 40px;
+            }
+
+            .progress-bar {
+                height: 30px;
+                margin: 20px 0;
+            }
+
+            .reset-button {
+                font-size: 20px;
+                padding: 18px 35px;
+                max-width: 400px;
+            }
+
+            /* Calendar styles for iPad */
+            .calendar {
+                padding: 25px;
+                margin: 25px 0;
+            }
+
+            .calendar-grid {
+                gap: 8px;
+            }
+
+            .calendar-date {
+                padding: 15px 5px;
+                font-size: 18px;
+            }
+
+            .calendar-weekday {
+                font-size: 16px;
+                padding: 8px;
+            }
+
+            /* Modal styles for iPad */
+            .modal-content {
+                width: 80%;
+                max-width: 800px;
+                padding: 30px;
+            }
+
+            .emoji-picker {
+                grid-template-columns: repeat(10, 1fr);
+                gap: 15px;
+                max-height: 300px;
+            }
+
+            .emoji-option {
+                font-size: 32px;
+                padding: 15px;
+            }
+
+            /* Landscape specific styles */
+            @media (orientation: landscape) {
+                .container {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 20px;
+                    align-items: start;
+                }
+
+                .nav-buttons {
+                    grid-column: 1 / -1;
+                }
+
+                .calendar {
+                    grid-column: 1 / -1;
+                }
+
+                .day-selector {
+                    grid-column: 1 / -1;
+                }
+
+                #days-container {
+                    grid-column: 1 / -1;
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                    gap: 20px;
+                }
+
+                .day {
+                    margin: 0;
+                }
+
+                .summary {
+                    grid-column: 1 / -1;
+                    position: relative;
+                    bottom: auto;
+                }
+            }
+        }
+
+        @supports (-webkit-touch-callout: none) {
+            .container {
+                padding-bottom: calc(20px + var(--safe-area-inset-bottom));
+            }
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+
+        .nav-button {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: transform var(--transition-speed) ease;
+            -webkit-tap-highlight-color: transparent;
+            flex: 1;
+            box-shadow: 0 2px 4px rgba(255, 105, 180, 0.2);
+            font-family: 'Comic Neue', cursive;
+            contain: content;
+        }
+
+        .nav-button:active {
+            transform: scale(var(--scale-factor));
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            border: 3px solid var(--secondary-color);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--primary-color);
+            z-index: 1001;
+            padding: 5px 10px;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+
+        .close-button:hover {
+            background: var(--card-bg);
+        }
+
+        .emoji-picker {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .emoji-option {
+            font-size: 24px;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.2s;
+        }
+
+        .emoji-option:hover {
+            background: var(--card-bg);
+        }
+
+        .custom-task-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .custom-task-form input {
+            padding: 10px;
+            border: 2px solid var(--secondary-color);
+            border-radius: 10px;
+            font-family: 'Comic Neue', cursive;
+        }
+
+        .custom-task-form button {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Comic Neue', cursive;
+        }
+
+        .task-list {
+            margin-top: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            background: var(--card-bg);
+            margin: 5px 0;
+            border-radius: 10px;
+        }
+
+        .delete-task {
+            color: #ff4444;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .weekly-summary {
+            display: none;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 15px;
+            border-radius: 15px;
+            margin: 10px 0;
+            border: 2px solid var(--secondary-color);
+            box-shadow: 0 2px 4px rgba(255, 105, 180, 0.1);
+        }
+
+        .summary-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .task-stats {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
+        .stat-item {
+            background: var(--card-bg);
+            padding: 5px 10px;
+            border-radius: 10px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .sticker-count {
+            text-align: right;
+            color: var(--primary-color);
+            font-weight: bold;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed var(--secondary-color);
+        }
+
+        .day-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding: 10px 0;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .day-button {
+            background: var(--card-bg);
+            border: 2px solid var(--secondary-color);
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            white-space: nowrap;
+            font-family: 'Comic Neue', cursive;
+        }
+
+        .day-button.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .day-progress {
+            background: white;
+            padding: 10px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-around;
+            font-size: 18px;
+            color: var(--primary-color);
+            border: 2px solid var(--secondary-color);
+        }
+
+        /* Calendar styles */
+        .calendar {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 2px solid var(--secondary-color);
+            display: none; /* Hide calendar by default */
+        }
+
+        .calendar.show {
+            display: block; /* Show calendar when this class is added */
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .calendar-nav {
+            display: flex;
+            gap: 10px;
+        }
+
+        .calendar-nav button {
+            background: var(--card-bg);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-family: 'Comic Neue', cursive;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            text-align: center;
+        }
+
+        .calendar-weekday {
+            font-weight: bold;
+            color: var(--primary-color);
+            padding: 5px;
+        }
+
+        .calendar-date {
+            padding: 10px 5px;
+            border-radius: 10px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .calendar-date:hover {
+            background: var(--card-bg);
+        }
+
+        .calendar-date.today {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .calendar-date.has-completed::after {
+            content: '✓';
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            font-size: 10px;
+            color: var(--primary-color);
+        }
+
+        .calendar-date.has-stickers::before {
+            content: '🌟';
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            font-size: 10px;
+        }
+
+        /* Add Todo List styles */
+        .todo-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: white;
+            border-radius: 15px;
+            margin: 10px 0;
+            border: 2px solid var(--secondary-color);
+            transition: all 0.2s;
+        }
+
+        .todo-item.completed {
+            background: #E8F5E9;
+            border-color: #81C784;
+        }
+
+        .todo-item.completed .todo-text {
+            text-decoration: line-through;
+            color: #666;
+        }
+
+        .todo-checkbox {
+            margin-right: 15px;
+        }
+
+        .todo-text {
+            flex: 1;
+            font-size: 16px;
+            color: var(--text-color);
+        }
+
+        .todo-delete {
+            background: none;
+            border: none;
+            color: #ff4444;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .todo-input {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .todo-input-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .todo-input input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid var(--secondary-color);
+            border-radius: 15px;
+            font-family: 'Comic Neue', cursive;
+            font-size: 16px;
+        }
+
+        .todo-input button {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-family: 'Comic Neue', cursive;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+
+        .todo-input button:active {
+            transform: scale(0.98);
+        }
+
+        .todo-date-picker {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: var(--card-bg);
+            border-radius: 15px;
+        }
+
+        .todo-date-picker label {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .todo-date-picker input {
+            padding: 8px;
+            border: 2px solid var(--secondary-color);
+            border-radius: 10px;
+            font-family: 'Comic Neue', cursive;
+        }
+
+        .todo-emoji-picker {
+            display: flex;
+            gap: 10px;
+            padding: 10px;
+            background: var(--card-bg);
+            border-radius: 15px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .todo-emoji-option {
+            font-size: 24px;
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.2s;
+            background: white;
+            border: 2px solid transparent;
+        }
+
+        .todo-emoji-option:hover {
+            background: var(--secondary-color);
+        }
+
+        .todo-emoji-option.selected {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            transform: scale(1.1);
+        }
+
+        .todo-list {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .todo-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .todo-list::-webkit-scrollbar-track {
+            background: var(--card-bg);
+            border-radius: 4px;
+        }
+
+        .todo-list::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 4px;
+        }
+
+        .calendar-date.has-todo::before {
+            content: '📝';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            font-size: 10px;
+        }
+
+        .calendar-date.has-todo.completed::before {
+            content: '✅';
+        }
+
+        /* Remove weekly summary styles */
+        .summary-card,
+        .summary-header,
+        .task-stats,
+        .stat-item,
+        .sticker-count {
+            display: none;
+        }
+
+        /* Add will-change for smoother animations */
+        .task, .day, .nav-button, .reset-button {
+            will-change: transform;
+        }
+
+        /* Use hardware acceleration for animations */
+        .task:active, .day:active, .nav-button:active, .reset-button:active {
+            transform: translateZ(0);
+        }
+
+        /* Optimize animations */
+        @keyframes sparkle {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+        }
+
+        /* Use CSS containment for better performance */
+        .day, .task, .todo-item {
+            contain: content;
+        }
+
+        /* Optimize scrolling performance */
+        .todo-list, .task-list {
+            -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
+        }
+
+        /* Use CSS variables for better performance */
+        :root {
+            --transition-speed: 0.2s;
+            --scale-factor: 0.98;
+        }
+
+        /* Optimize transitions */
+        .task, .day, .nav-button, .reset-button {
+            transition: transform var(--transition-speed) ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>🌈 Roxy的每周打卡清单 / Roxy's Weekly Checklist 🌈</h2>
+        
+        <div class="nav-buttons">
+            <button class="nav-button" onclick="showCustomTaskModal()">添加新任务 / Add Task</button>
+            <button class="nav-button" onclick="toggleCalendar()">月视图 / Month View</button>
+            <button class="nav-button" onclick="showTodoModal()">待办事项 / Todo List</button>
+        </div>
+
+        <!-- Add Calendar Section -->
+        <div class="calendar" id="calendar">
+            <div class="calendar-header">
+                <div class="calendar-nav">
+                    <button onclick="previousMonth()">◀</button>
+                    <h3 id="currentMonth"></h3>
+                    <button onclick="nextMonth()">▶</button>
+                </div>
+            </div>
+            <div class="calendar-grid" id="calendarGrid">
+                <!-- Calendar will be generated here -->
+            </div>
+        </div>
+
+        <div class="day-selector" id="daySelector">
+            <!-- Days will be dynamically generated -->
+        </div>
+
+        <div id="days-container">
+            <!-- Days will be dynamically generated -->
+        </div>
+
+        <div class="summary">
+            <div>🌟 总计获得贴纸: <span id="totalStickers">0</span> / Total Stickers Earned: <span id="totalStickersEng">0</span> 🌟</div>
+            <div class="progress-bar">
+                <div class="progress" id="progressBar"></div>
+            </div>
+            <button class="reset-button" onclick="resetWeek()">重置本周 / Reset Week</button>
+        </div>
+    </div>
+
+    <!-- Custom Task Modal -->
+    <div class="modal" id="customTaskModal">
+        <div class="modal-content">
+            <button class="close-button" onclick="hideCustomTaskModal()">×</button>
+            <h3>添加新任务 / Add New Task</h3>
+            <div class="custom-task-form">
+                <div>
+                    <label>选择表情 / Choose Emoji:</label>
+                    <div class="emoji-picker" id="emojiPicker">
+                        <!-- Emojis will be dynamically generated -->
+                    </div>
+                </div>
+                <input type="text" id="taskName" placeholder="输入任务名称 / Enter task name">
+                <div>
+                    <label>
+                        <input type="checkbox" id="taskOptional"> 可选任务 / Optional task
+                    </label>
+                </div>
+                <button onclick="addCustomTask()">添加 / Add</button>
+            </div>
+            <div class="task-list" id="customTaskList">
+                <!-- Custom tasks will be listed here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Todo List Modal -->
+    <div class="modal" id="todoModal">
+        <div class="modal-content">
+            <button class="close-button" onclick="hideTodoModal()">×</button>
+            <h3>待办事项 / Todo List</h3>
+            <div class="todo-input">
+                <div class="todo-input-row">
+                    <input type="text" id="todoInput" placeholder="添加新的待办事项 / Add new todo">
+                    <button onclick="addTodo()">添加 / Add</button>
+                </div>
+                <div class="todo-date-picker">
+                    <label>选择日期 / Choose Date:</label>
+                    <input type="date" id="todoDate">
+                </div>
+                <div class="todo-emoji-picker" id="todoEmojiPicker">
+                    <div class="todo-emoji-option selected" onclick="selectTodoEmoji('📝')">📝</div>
+                    <div class="todo-emoji-option" onclick="selectTodoEmoji('📚')">📚</div>
+                    <div class="todo-emoji-option" onclick="selectTodoEmoji('🎨')">🎨</div>
+                    <div class="todo-emoji-option" onclick="selectTodoEmoji('🎮')">🎮</div>
+                    <div class="todo-emoji-option" onclick="selectTodoEmoji('🎵')">🎵</div>
+                    <div class="todo-emoji-option" onclick="selectTodoEmoji('🎪')">🎪</div>
+                    <div class="todo-emoji-option" onclick="selectTodoEmoji('🎯')">🎯</div>
+                    <div class="todo-emoji-option" onclick="selectTodoEmoji('🎲')">🎲</div>
+                </div>
+            </div>
+            <div class="todo-list" id="todoList">
+                <!-- Todo items will be generated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Weekly Summary -->
+    <div class="modal" id="weeklySummaryModal">
+        <div class="modal-content">
+            <button class="close-button" onclick="hideWeeklySummary()">×</button>
+            <h3>本周汇总 / Weekly Summary</h3>
+            <div id="weeklySummaryContent">
+                <!-- Weekly summary will be generated here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful');
+                    })
+                    .catch(err => {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
+
+        const tasks = {
+            weekday: [
+                { icon: '📖', name: '读书 / Reading', optional: false },
+                { icon: '✏️', name: '作业 / Homework', optional: false },
+                { icon: '🎹', name: '练钢琴 / Piano Practice', optional: false },
+                { icon: '🧹', name: '收拾 / Tidying Up', optional: false },
+                { icon: '🛒', name: '选做：家务 / Optional: Chores', optional: true }
+            ],
+            weekend: [
+                { icon: '📖', name: '读书 / Reading', optional: false },
+                { icon: '✏️', name: '作业 / Homework', optional: false },
+                { icon: '🎹', name: '练钢琴 / Piano Practice', optional: false },
+                { icon: '🧹', name: '收拾 / Tidying Up', optional: false },
+                { icon: '🚴', name: '骑自行车 / Cycling', optional: false },
+                { icon: '🏃', name: '跑步 / Running', optional: false },
+                { icon: '🏊', name: '游泳（可选） / Swimming (Optional)', optional: true },
+                { icon: '🛒', name: '选做：家务 / Optional: Chores', optional: true }
+            ]
+        };
+
+        const days = ['星期一 / Monday', '星期二 / Tuesday', '星期三 / Wednesday', 
+                     '星期四 / Thursday', '星期五 / Friday', '星期六 / Saturday', '星期日 / Sunday'];
+
+        let customTasks = JSON.parse(localStorage.getItem('customTasks') || '[]');
+        let currentDay = new Date().getDay() - 1; // 0-6, Monday-Sunday
+
+        // Add performance monitoring
+        const performance = {
+            startTime: Date.now(),
+            interactions: 0,
+            lastInteraction: null
+        };
+
+        // Debounce function for performance
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Optimize DOM updates
+        const updateProgress = debounce(() => {
+            const currentDayTasks = document.querySelectorAll(`.task[data-day="${currentDay}"]`);
+            const completedTasks = document.querySelectorAll(`.task[data-day="${currentDay}"] .taskDone:checked`).length;
+            const totalTasks = currentDayTasks.length;
+            const dayStickers = document.querySelectorAll(`.task[data-day="${currentDay}"] .stickerGiven:checked`).length;
+            
+            // Use requestAnimationFrame for smooth updates
+            requestAnimationFrame(() => {
+                const dayElement = document.querySelector(`.day`);
+                if (dayElement) {
+                    dayElement.querySelector('.day-completed').textContent = completedTasks;
+                    dayElement.querySelector('.day-stickers').textContent = dayStickers;
+                }
+                
+                const progress = JSON.parse(localStorage.getItem('weeklyProgress') || '{"tasks":{},"stickers":{}}');
+                let totalStickers = 0;
+                
+                // Optimize sticker counting
+                for (let dayIndex = 0; dayIndex < 7; dayIndex++) {
+                    if (progress.stickers[dayIndex]) {
+                        totalStickers += progress.stickers[dayIndex].filter(Boolean).length;
+                    }
+                }
+                
+                if (dayStickers > 0) {
+                    const currentStickers = progress.stickers[currentDay] || [];
+                    const currentStickerCount = currentStickers.filter(Boolean).length;
+                    if (dayStickers > currentStickerCount) {
+                        totalStickers += (dayStickers - currentStickerCount);
+                    }
+                }
+                
+                document.getElementById('totalStickers').textContent = totalStickers;
+                document.getElementById('totalStickersEng').textContent = totalStickers;
+                
+                const progressPercent = (completedTasks / totalTasks) * 100;
+                document.getElementById('progressBar').style.width = `${progressPercent}%`;
+                
+                saveProgress();
+            });
+        }, 100);
+
+        // Optimize event listeners
+        function setupEventListeners() {
+            const taskContainer = document.querySelector('.day');
+            if (!taskContainer) return;
+
+            // Use event delegation for better performance
+            taskContainer.addEventListener('change', (e) => {
+                if (e.target.classList.contains('taskDone')) {
+                    const task = e.target.closest('.task');
+                    if (e.target.checked) {
+                        task.classList.add('completed');
+                        if (navigator.vibrate) {
+                            navigator.vibrate(50);
+                        }
+                    } else {
+                        task.classList.remove('completed');
+                    }
+                    updateProgress();
+                } else if (e.target.classList.contains('stickerGiven')) {
+                    if (e.target.checked && navigator.vibrate) {
+                        navigator.vibrate(100);
+                    }
+                    updateProgress();
+                }
+            });
+        }
+
+        // Optimize localStorage operations
+        const storage = {
+            get: (key) => {
+                try {
+                    return JSON.parse(localStorage.getItem(key) || '{}');
+                } catch (e) {
+                    console.error('Error reading from localStorage:', e);
+                    return {};
+                }
+            },
+            set: (key, value) => {
+                try {
+                    localStorage.setItem(key, JSON.stringify(value));
+                } catch (e) {
+                    console.error('Error writing to localStorage:', e);
+                }
+            }
+        };
+
+        // Optimize calendar updates
+        const updateCalendar = debounce(() => {
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            
+            const monthNames = ["January", "February", "March", "April", "May", "June",
+                              "July", "August", "September", "October", "November", "December"];
+            document.getElementById('currentMonth').textContent = `${monthNames[month]} ${year}`;
+            
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const startingDay = firstDay.getDay();
+            const totalDays = lastDay.getDate();
+            
+            const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            let calendarHTML = weekdays.map(day => 
+                `<div class="calendar-weekday">${day}</div>`
+            ).join('');
+            
+            for (let i = 0; i < startingDay; i++) {
+                calendarHTML += '<div class="calendar-date"></div>';
+            }
+            
+            const today = new Date();
+            const progress = storage.get('weeklyProgress');
+            
+            for (let day = 1; day <= totalDays; day++) {
+                const date = new Date(year, month, day);
+                const dateString = date.toISOString().split('T')[0];
+                const dayOfWeek = date.getDay();
+                const isToday = date.toDateString() === today.toDateString();
+                const dayIndex = (dayOfWeek + 6) % 7;
+                
+                const hasCompleted = progress.tasks[dayIndex]?.some(Boolean);
+                const dayTodos = todos.filter(todo => todo.date === dateString);
+                const hasTodo = dayTodos.length > 0;
+                const allTodosCompleted = hasTodo && dayTodos.every(todo => todo.completed);
+                
+                const classes = [
+                    'calendar-date',
+                    isToday ? 'today' : '',
+                    hasCompleted ? 'has-completed' : '',
+                    hasTodo ? 'has-todo' : '',
+                    allTodosCompleted ? 'completed' : ''
+                ].filter(Boolean).join(' ');
+                
+                calendarHTML += `
+                    <div class="${classes}" onclick="selectDate(${day}, ${month}, ${year})">
+                        ${day}
+                    </div>`;
+            }
+            
+            document.getElementById('calendarGrid').innerHTML = calendarHTML;
+        }, 100);
+
+        // Add performance monitoring
+        window.addEventListener('load', () => {
+            const loadTime = Date.now() - performance.startTime;
+            console.log(`Page loaded in ${loadTime}ms`);
+        });
+
+        // Track user interactions
+        document.addEventListener('click', () => {
+            performance.interactions++;
+            performance.lastInteraction = Date.now();
+        });
+
+        // Optimize initialization
+        function initializeApp() {
+            requestAnimationFrame(() => {
+                const container = document.getElementById('days-container');
+                const daySelector = document.getElementById('daySelector');
+                
+                daySelector.innerHTML = days.map((day, index) => `
+                    <button class="day-button ${index === currentDay ? 'active' : ''}" 
+                            onclick="showDay(${index})">${day}</button>
+                `).join('');
+                
+                updateCalendar();
+                showDay(currentDay);
+                loadProgress();
+                setupEventListeners();
+                setupTouchFeedback();
+                updateCustomTaskList();
+            });
+        }
+
+        function showDay(index) {
+            currentDay = index;
+            const container = document.getElementById('days-container');
+            container.innerHTML = createDayElement(days[index], index);
+            
+            // Update day selector
+            document.querySelectorAll('.day-button').forEach((btn, i) => {
+                btn.classList.toggle('active', i === index);
+            });
+            
+            loadProgress();
+            setupEventListeners();
+            setupTouchFeedback();
+        }
+
+        function createDayElement(dayName, index) {
+            const dayTasks = index < 5 ? tasks.weekday : tasks.weekend;
+            const isFriday = index === 4;
+            const allTasks = [...dayTasks, ...customTasks];
+            
+            return `
+                <div class="day">
+                    <h3>📅 ${dayName}</h3>
+                    <div class="day-progress">
+                        <div>今日完成: <span class="day-completed">0</span>/${allTasks.length}</div>
+                        <div>今日贴纸: <span class="day-stickers">0</span> 🌟</div>
+                    </div>
+                    ${allTasks.map((task, taskIndex) => `
+                        <div class="task" data-day="${index}" data-task="${taskIndex}">
+                            ${task.icon} <span>${task.name}</span>
+                            <input type="checkbox" class="taskDone" 
+                                   ${(isFriday && taskIndex === 1) || task.optional ? 'data-optional="true"' : ''}> 
+                            <span>贴纸sticker🌟</span>
+                            <input type="checkbox" class="stickerGiven"> 
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function showCustomTaskModal() {
+            document.getElementById('customTaskModal').style.display = 'flex';
+            generateEmojiPicker();
+        }
+
+        function hideCustomTaskModal() {
+            document.getElementById('customTaskModal').style.display = 'none';
+        }
+
+        function generateEmojiPicker() {
+            const emojiPicker = document.getElementById('emojiPicker');
+            const commonEmojis = ['📖', '✏️', '🎹', '🧹', '🛒', '🚴', '🏃', '🏊', '🎨', '🎮', '🎵', '🎸', '🎯', '🎪', '🎪', '🎨', '🎭', '🎪', '🎯', '🎮', '🎲', '🎯', '🎪', '🎭', '🎨', '🎪', '🎯', '🎮', '🎲', '🎯', '🎪'];
+            emojiPicker.innerHTML = commonEmojis.map(emoji => `
+                <div class="emoji-option" onclick="selectEmoji('${emoji}')">${emoji}</div>
+            `).join('');
+        }
+
+        let selectedEmoji = '📝';
+
+        function selectEmoji(emoji) {
+            selectedEmoji = emoji;
+            document.getElementById('taskName').focus();
+        }
+
+        function addCustomTask() {
+            const taskName = document.getElementById('taskName').value.trim();
+            const isOptional = document.getElementById('taskOptional').checked;
+            
+            if (taskName) {
+                customTasks.push({
+                    icon: selectedEmoji,
+                    name: taskName,
+                    optional: isOptional
+                });
+                
+                localStorage.setItem('customTasks', JSON.stringify(customTasks));
+                updateCustomTaskList();
+                document.getElementById('taskName').value = '';
+                document.getElementById('taskOptional').checked = false;
+                showDay(currentDay);
+            }
+        }
+
+        function updateCustomTaskList() {
+            const taskList = document.getElementById('customTaskList');
+            taskList.innerHTML = customTasks.map((task, index) => `
+                <div class="task-item">
+                    <span>${task.icon} ${task.name}</span>
+                    <button class="delete-task" onclick="deleteCustomTask(${index})">×</button>
+                </div>
+            `).join('');
+        }
+
+        function deleteCustomTask(index) {
+            customTasks.splice(index, 1);
+            localStorage.setItem('customTasks', JSON.stringify(customTasks));
+            updateCustomTaskList();
+            showDay(currentDay);
+        }
+
+        function setupTouchFeedback() {
+            document.querySelectorAll('.task').forEach(task => {
+                task.addEventListener('touchstart', () => {
+                    task.style.transform = 'scale(0.98)';
+                });
+                
+                task.addEventListener('touchend', () => {
+                    task.style.transform = 'scale(1)';
+                });
+            });
+        }
+
+        function loadProgress() {
+            const savedProgress = localStorage.getItem('weeklyProgress');
+            if (savedProgress) {
+                const progress = JSON.parse(savedProgress);
+                
+                // Load progress for current day only
+                const dayTasks = currentDay < 5 ? tasks.weekday : tasks.weekend;
+                const allTasks = [...dayTasks, ...customTasks];
+                
+                if (progress.tasks[currentDay]) {
+                    document.querySelectorAll(`.task[data-day="${currentDay}"] .taskDone`).forEach((cb, i) => {
+                        cb.checked = progress.tasks[currentDay][i];
+                        if (progress.tasks[currentDay][i]) {
+                            cb.closest('.task').classList.add('completed');
+                        }
+                    });
+                }
+                
+                if (progress.stickers[currentDay]) {
+                    document.querySelectorAll(`.task[data-day="${currentDay}"] .stickerGiven`).forEach((cb, i) => {
+                        cb.checked = progress.stickers[currentDay][i];
+                    });
+                }
+                
+                updateProgress();
+            }
+        }
+
+        function resetWeek() {
+            if (confirm('确定要重置本周的进度吗？/ Are you sure you want to reset this week?')) {
+                const progress = JSON.parse(localStorage.getItem('weeklyProgress') || '{"tasks":{},"stickers":{}}');
+                
+                // Reset all tasks and stickers for the current week
+                for (let i = 0; i < 7; i++) {
+                    const dayTasks = i < 5 ? tasks.weekday : tasks.weekend;
+                    const allTasks = [...dayTasks, ...customTasks];
+                    progress.tasks[i] = new Array(allTasks.length).fill(false);
+                    progress.stickers[i] = new Array(allTasks.length).fill(false);
+                }
+                
+                // Save the updated progress
+                localStorage.setItem('weeklyProgress', JSON.stringify(progress));
+                
+                // Update UI for all days
+                for (let i = 0; i < 7; i++) {
+                    showDay(i);
+                }
+                
+                // Show current day again
+                showDay(currentDay);
+                
+                // Update progress display
+                updateProgress();
+                
+                // Add haptic feedback if available
+                if (navigator.vibrate) {
+                    navigator.vibrate([50, 50, 50]);
+                }
+            }
+        }
+
+        // Add Calendar Functions
+        let currentDate = new Date();
+        
+        function toggleCalendar() {
+            const calendar = document.getElementById('calendar');
+            calendar.classList.toggle('show');
+        }
+        
+        function selectDate(day, month, year) {
+            const selected = new Date(year, month, day);
+            const dayIndex = (selected.getDay() + 6) % 7; // Convert to Monday-based index
+            showDay(dayIndex);
+            
+            // Scroll to tasks
+            document.getElementById('days-container').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Add Todo List functions
+        let todos = JSON.parse(localStorage.getItem('todos') || '[]');
+        let selectedTodoEmoji = '📝';
+
+        function selectTodoEmoji(emoji) {
+            selectedTodoEmoji = emoji;
+            document.querySelectorAll('.todo-emoji-option').forEach(option => {
+                option.classList.toggle('selected', option.textContent === emoji);
+            });
+        }
+
+        function showTodoModal() {
+            document.getElementById('todoModal').style.display = 'flex';
+            updateTodoList();
+            // Set default date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('todoDate').value = today;
+        }
+
+        function hideTodoModal() {
+            document.getElementById('todoModal').style.display = 'none';
+        }
+
+        function addTodo() {
+            const input = document.getElementById('todoInput');
+            const dateInput = document.getElementById('todoDate');
+            const text = input.value.trim();
+            const date = dateInput.value;
+            
+            if (text) {
+                todos.push({
+                    id: Date.now(),
+                    text: text,
+                    completed: false,
+                    date: date,
+                    emoji: selectedTodoEmoji
+                });
+                
+                localStorage.setItem('todos', JSON.stringify(todos));
+                updateTodoList();
+                updateCalendar();
+                input.value = '';
+                
+                // Add haptic feedback if available
+                if (navigator.vibrate) {
+                    navigator.vibrate(50);
+                }
+            }
+        }
+
+        function toggleTodo(id) {
+            const todo = todos.find(t => t.id === id);
+            if (todo) {
+                todo.completed = !todo.completed;
+                localStorage.setItem('todos', JSON.stringify(todos));
+                updateTodoList();
+                updateCalendar();
+                
+                // Add haptic feedback if available
+                if (navigator.vibrate) {
+                    navigator.vibrate(50);
+                }
+            }
+        }
+
+        function deleteTodo(id) {
+            todos = todos.filter(t => t.id !== id);
+            localStorage.setItem('todos', JSON.stringify(todos));
+            updateTodoList();
+            updateCalendar();
+            
+            // Add haptic feedback if available
+            if (navigator.vibrate) {
+                navigator.vibrate(100);
+            }
+        }
+
+        function updateTodoList() {
+            const todoList = document.getElementById('todoList');
+            todoList.innerHTML = todos
+                .sort((a, b) => new Date(a.date) - new Date(b.date))
+                .map(todo => `
+                    <div class="todo-item ${todo.completed ? 'completed' : ''}">
+                        <input type="checkbox" class="todo-checkbox" 
+                               ${todo.completed ? 'checked' : ''} 
+                               onchange="toggleTodo(${todo.id})">
+                        <span class="todo-text">${todo.emoji} ${todo.text}</span>
+                        <span class="todo-date">${formatDate(todo.date)}</span>
+                        <button class="todo-delete" onclick="deleteTodo(${todo.id})">×</button>
+                    </div>
+                `).join('');
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('zh-CN', {
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        // Initialize the app
+        initializeApp();
+    </script>
+</body>
+</html> 
