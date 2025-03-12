@@ -536,81 +536,128 @@
 
         /* Calendar styles */
         .calendar {
-            padding: 25px;
-            margin: 25px 0;
+            background: white;
+            border-radius: 15px;
+            padding: 12px;
+            margin: 15px 0;
             width: 100%;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
             box-sizing: border-box;
+            display: none;
+            border: 2px solid var(--secondary-color);
         }
 
         .calendar.show {
-            display: block; /* Show calendar when this class is added */
+            display: block !important;
         }
 
         .calendar-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .calendar-nav {
             display: flex;
-            gap: 10px;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding: 0 5px;
         }
 
         .calendar-nav button {
-            background: var(--card-bg);
+            font-size: 16px;
+            padding: 6px 12px;
+            background: transparent;
             border: none;
-            padding: 8px 15px;
-            border-radius: 15px;
+            border-radius: 20px;
             cursor: pointer;
-            font-family: 'Comic Neue', cursive;
+            transition: all 0.2s;
+            color: var(--primary-color);
+        }
+
+        .calendar-nav button:hover {
+            background: var(--card-bg);
+        }
+
+        .calendar-nav h3 {
+            font-size: 16px;
+            margin: 0;
+            color: var(--primary-color);
+            flex: 1;
+            text-align: center;
         }
 
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 5px;
-            text-align: center;
-        }
-
-        .calendar-weekday {
-            font-weight: bold;
-            color: var(--primary-color);
+            gap: 2px;
+            width: 100%;
             padding: 5px;
         }
 
-        .calendar-date {
-            padding: 10px 5px;
-            border-radius: 10px;
-            cursor: pointer;
-            position: relative;
+        .calendar-weekday {
+            font-size: 12px;
+            padding: 8px 2px;
+            color: var(--primary-color);
+            text-align: center;
+            font-weight: bold;
+            opacity: 0.8;
         }
 
-        .calendar-date:hover {
+        .calendar-date {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            background: transparent;
+            border: none;
+            min-height: 30px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            color: var(--text-color);
+        }
+
+        .calendar-date:not(:empty) {
+            background: transparent;
+        }
+
+        .calendar-date:empty {
+            background: transparent;
+            border: none;
+            cursor: default;
+        }
+
+        .calendar-date:not(:empty):hover {
             background: var(--card-bg);
+            border-radius: 50%;
+            transform: scale(1.1);
         }
 
         .calendar-date.today {
             background: var(--primary-color);
             color: white;
+            border-radius: 50%;
+            font-weight: bold;
         }
 
-        .calendar-date.has-completed::after {
-            content: '✓';
+        .calendar-date.has-todo::before {
+            content: '•';
             position: absolute;
-            bottom: 2px;
-            right: 2px;
-            font-size: 10px;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 14px;
             color: var(--primary-color);
         }
 
-        .calendar-date.has-stickers::before {
-            content: '🌟';
-            position: absolute;
-            top: 2px;
-            right: 2px;
-            font-size: 10px;
+        .calendar-date.has-todo.completed::before {
+            color: #4CAF50;
         }
 
         /* Add Todo List styles */
@@ -820,6 +867,62 @@
         .task, .day, .nav-button, .reset-button {
             transition: transform var(--transition-speed) ease;
         }
+
+        /* Calendar and Todo List Layout */
+        .calendar-todo-container {
+            display: flex;
+            gap: 20px;
+            margin: 15px 0;
+            align-items: flex-start;
+        }
+
+        .calendar {
+            background: white;
+            border-radius: 15px;
+            padding: 12px;
+            margin: 0;
+            width: 400px;
+            flex-shrink: 0;
+            box-sizing: border-box;
+            display: none;
+            border: 2px solid var(--secondary-color);
+        }
+
+        .todo-section {
+            flex: 1;
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            border: 2px solid var(--secondary-color);
+            display: none;
+        }
+
+        .todo-section.show {
+            display: block;
+        }
+
+        .calendar.show {
+            display: block;
+        }
+
+        .calendar-todo-container.show {
+            display: flex;
+        }
+
+        @media (max-width: 768px) {
+            .calendar-todo-container {
+                flex-direction: column;
+            }
+            
+            .calendar {
+                width: 100%;
+                margin: 0 auto;
+            }
+            
+            .todo-section {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -828,21 +931,42 @@
         
         <div class="nav-buttons">
             <button class="nav-button" onclick="showCustomTaskModal()">添加新任务 / Add Task</button>
-            <button class="nav-button" onclick="toggleCalendar()">月视图 / Month View</button>
-            <button class="nav-button" onclick="showTodoModal()">待办事项 / Todo List</button>
+            <button class="nav-button" onclick="toggleCalendarAndTodo()">月视图和待办事项 / Month View & Todo</button>
         </div>
 
-        <!-- Add Calendar Section -->
-        <div class="calendar" id="calendar">
-            <div class="calendar-header">
-                <div class="calendar-nav">
-                    <button onclick="previousMonth()">◀</button>
-                    <h3 id="currentMonth"></h3>
-                    <button onclick="nextMonth()">▶</button>
+        <!-- Add Calendar and Todo Container -->
+        <div class="calendar-todo-container" id="calendarTodoContainer">
+            <div class="calendar" id="calendar">
+                <div class="calendar-header">
+                    <div class="calendar-nav">
+                        <button onclick="previousMonth()">◀</button>
+                        <h3 id="currentMonth"></h3>
+                        <button onclick="nextMonth()">▶</button>
+                    </div>
+                </div>
+                <div class="calendar-grid" id="calendarGrid">
+                    <!-- Calendar will be generated here -->
                 </div>
             </div>
-            <div class="calendar-grid" id="calendarGrid">
-                <!-- Calendar will be generated here -->
+            
+            <div class="todo-section" id="todoSection">
+                <h3>待办事项 / Todo List</h3>
+                <div class="todo-input">
+                    <div class="todo-input-row">
+                        <input type="text" id="todoInput" placeholder="添加新的待办事项 / Add new todo">
+                        <button onclick="addTodo()">添加 / Add</button>
+                    </div>
+                    <div class="todo-date-picker">
+                        <label>选择日期 / Choose Date:</label>
+                        <input type="date" id="todoDate">
+                    </div>
+                    <div class="todo-emoji-picker" id="todoEmojiPicker">
+                        <!-- Emoji options will be here -->
+                    </div>
+                </div>
+                <div class="todo-list" id="todoList">
+                    <!-- Todo items will be generated here -->
+                </div>
             </div>
         </div>
 
@@ -885,37 +1009,6 @@
             </div>
             <div class="task-list" id="customTaskList">
                 <!-- Custom tasks will be listed here -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Add Todo List Modal -->
-    <div class="modal" id="todoModal">
-        <div class="modal-content">
-            <button class="close-button" onclick="hideTodoModal()">×</button>
-            <h3>待办事项 / Todo List</h3>
-            <div class="todo-input">
-                <div class="todo-input-row">
-                    <input type="text" id="todoInput" placeholder="添加新的待办事项 / Add new todo">
-                    <button onclick="addTodo()">添加 / Add</button>
-                </div>
-                <div class="todo-date-picker">
-                    <label>选择日期 / Choose Date:</label>
-                    <input type="date" id="todoDate">
-                </div>
-                <div class="todo-emoji-picker" id="todoEmojiPicker">
-                    <div class="todo-emoji-option selected" onclick="selectTodoEmoji('📝')">📝</div>
-                    <div class="todo-emoji-option" onclick="selectTodoEmoji('📚')">📚</div>
-                    <div class="todo-emoji-option" onclick="selectTodoEmoji('🎨')">🎨</div>
-                    <div class="todo-emoji-option" onclick="selectTodoEmoji('🎮')">🎮</div>
-                    <div class="todo-emoji-option" onclick="selectTodoEmoji('🎵')">🎵</div>
-                    <div class="todo-emoji-option" onclick="selectTodoEmoji('🎪')">🎪</div>
-                    <div class="todo-emoji-option" onclick="selectTodoEmoji('🎯')">🎯</div>
-                    <div class="todo-emoji-option" onclick="selectTodoEmoji('🎲')">🎲</div>
-                </div>
-            </div>
-            <div class="todo-list" id="todoList">
-                <!-- Todo items will be generated here -->
             </div>
         </div>
     </div>
@@ -1081,7 +1174,7 @@
         };
 
         // Optimize calendar updates
-        const updateCalendar = debounce(() => {
+        const updateCalendar = () => {
             const year = currentDate.getFullYear();
             const month = currentDate.getMonth();
             
@@ -1132,8 +1225,15 @@
                     </div>`;
             }
             
+            // Add remaining empty cells if needed
+            const totalCells = 42; // 6 rows × 7 days
+            const remainingCells = totalCells - (startingDay + totalDays);
+            for (let i = 0; i < remainingCells; i++) {
+                calendarHTML += '<div class="calendar-date"></div>';
+            }
+            
             document.getElementById('calendarGrid').innerHTML = calendarHTML;
-        }, 100);
+        };
 
         // Add performance monitoring
         window.addEventListener('load', () => {
@@ -1343,11 +1443,21 @@
         // Add Calendar Functions
         let currentDate = new Date();
         
-        function toggleCalendar() {
+        function toggleCalendarAndTodo() {
+            const container = document.getElementById('calendarTodoContainer');
             const calendar = document.getElementById('calendar');
+            const todoSection = document.getElementById('todoSection');
+            
+            container.classList.toggle('show');
             calendar.classList.toggle('show');
+            todoSection.classList.toggle('show');
+            
             if (calendar.classList.contains('show')) {
                 updateCalendar();
+                // Set default date to today for todo input
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('todoDate').value = today;
+                updateTodoList();
             }
         }
 
@@ -1382,18 +1492,6 @@
             document.querySelectorAll('.todo-emoji-option').forEach(option => {
                 option.classList.toggle('selected', option.textContent === emoji);
             });
-        }
-
-        function showTodoModal() {
-            document.getElementById('todoModal').style.display = 'flex';
-            updateTodoList();
-            // Set default date to today
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('todoDate').value = today;
-        }
-
-        function hideTodoModal() {
-            document.getElementById('todoModal').style.display = 'none';
         }
 
         function addTodo() {
