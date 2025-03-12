@@ -46,16 +46,10 @@
         }
 
         .container {
-            max-width: 800px;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 25px;
-            box-shadow: var(--shadow);
-            margin-top: 20px;
-            margin-bottom: 20px;
-            border: 3px solid var(--secondary-color);
-            position: relative;
+            width: 90%;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 25px;
         }
 
         .container::before {
@@ -108,8 +102,8 @@
         }
 
         .day {
-            margin: 20px 0;
-            padding: 20px;
+            margin: 25px 0;
+            padding: 25px;
             background: var(--card-bg);
             border-radius: 20px;
             transition: transform var(--transition-speed) ease;
@@ -307,185 +301,6 @@
 
             h2 {
                 font-size: 24px;
-            }
-        }
-
-        /* iPad specific styles */
-        @media (min-width: 768px) and (max-width: 1024px) {
-            .container {
-                width: 90%;
-                max-width: 1200px;
-                margin: 20px auto;
-                padding: 25px;
-            }
-
-            .nav-buttons {
-                flex-wrap: wrap;
-                gap: 15px;
-            }
-
-            .nav-button {
-                flex: 1 1 calc(33.333% - 10px);
-                min-width: 200px;
-                font-size: 18px;
-                padding: 12px 20px;
-            }
-
-            .day {
-                margin: 25px 0;
-                padding: 25px;
-            }
-
-            .task {
-                font-size: 18px;
-                padding: 18px;
-                margin: 15px 0;
-            }
-
-            .summary {
-                font-size: 20px;
-                padding: 25px;
-                margin-top: 40px;
-            }
-
-            .progress-bar {
-                height: 30px;
-                margin: 20px 0;
-            }
-
-            .reset-button {
-                font-size: 20px;
-                padding: 18px 35px;
-                max-width: 400px;
-            }
-
-            /* Calendar styles for iPad */
-            .calendar {
-                padding: 25px;
-                margin: 25px 0;
-                width: 100%;
-                box-sizing: border-box;
-            }
-
-            .calendar-grid {
-                display: grid;
-                grid-template-columns: repeat(7, 1fr);
-                gap: 8px;
-                width: 100%;
-            }
-
-            .calendar-date {
-                aspect-ratio: 1;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 20px;
-                background: white;
-                border: 1px solid var(--secondary-color);
-                border-radius: 10px;
-                min-height: 60px;
-                cursor: pointer;
-                transition: all 0.2s;
-            }
-
-            .calendar-date:hover {
-                background: var(--card-bg);
-                transform: scale(1.05);
-            }
-
-            .calendar-weekday {
-                font-size: 18px;
-                padding: 12px 5px;
-                background: var(--card-bg);
-                border-radius: 5px;
-                text-align: center;
-                font-weight: bold;
-            }
-
-            .calendar-nav {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 20px;
-                padding: 0 10px;
-            }
-
-            .calendar-nav button {
-                font-size: 24px;
-                padding: 10px 20px;
-                background: var(--card-bg);
-                border: none;
-                border-radius: 15px;
-                cursor: pointer;
-                transition: all 0.2s;
-            }
-
-            .calendar-nav button:hover {
-                background: var(--primary-color);
-                color: white;
-            }
-
-            .calendar-nav h3 {
-                font-size: 24px;
-                margin: 0;
-                color: var(--primary-color);
-            }
-
-            /* Modal styles for iPad */
-            .modal-content {
-                width: 80%;
-                max-width: 800px;
-                padding: 30px;
-            }
-
-            .emoji-picker {
-                grid-template-columns: repeat(10, 1fr);
-                gap: 15px;
-                max-height: 300px;
-            }
-
-            .emoji-option {
-                font-size: 32px;
-                padding: 15px;
-            }
-
-            /* Landscape specific styles */
-            @media (orientation: landscape) {
-                .container {
-                    display: grid;
-                    grid-template-columns: 1fr 1fr;
-                    gap: 20px;
-                    align-items: start;
-                }
-
-                .nav-buttons {
-                    grid-column: 1 / -1;
-                }
-
-                .calendar {
-                    grid-column: 1 / -1;
-                }
-
-                .day-selector {
-                    grid-column: 1 / -1;
-                }
-
-                #days-container {
-                    grid-column: 1 / -1;
-                    display: grid;
-                    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-                    gap: 20px;
-                }
-
-                .day {
-                    margin: 0;
-                }
-
-                .summary {
-                    grid-column: 1 / -1;
-                    position: relative;
-                    bottom: auto;
-                }
             }
         }
 
@@ -721,12 +536,10 @@
 
         /* Calendar styles */
         .calendar {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            margin: 20px 0;
-            border: 2px solid var(--secondary-color);
-            display: none; /* Hide calendar by default */
+            padding: 25px;
+            margin: 25px 0;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .calendar.show {
