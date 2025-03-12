@@ -393,119 +393,45 @@
             }
 
             /* Landscape specific styles */
-
             @media (orientation: landscape) {
                 .container {
                     display: grid;
                     grid-template-columns: 1fr 1fr;
-                    gap: 30px;
+                    gap: 20px;
                     align-items: start;
-                    padding: 30px;
-                    max-width: 1400px;
                 }
 
                 .nav-buttons {
                     grid-column: 1 / -1;
-                    display: grid;
-                    grid-template-columns: repeat(4, 1fr);
-                    gap: 15px;
-                }
-
-                .nav-button {
-                    font-size: 16px;
-                    padding: 12px 15px;
-                    min-width: auto;
                 }
 
                 .calendar {
                     grid-column: 1 / -1;
-                    margin: 0;
                 }
 
                 .day-selector {
                     grid-column: 1 / -1;
-                    justify-content: center;
-                    flex-wrap: wrap;
-                    gap: 15px;
-                }
-
-                .day-button {
-                    padding: 12px 25px;
-                    font-size: 16px;
                 }
 
                 #days-container {
                     grid-column: 1 / -1;
                     display: grid;
-                    grid-template-columns: repeat(4, 1fr);
+                    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
                     gap: 20px;
                 }
 
                 .day {
                     margin: 0;
-                    padding: 15px;
-                }
-
-                .day h3 {
-                    font-size: 18px;
-                    margin-bottom: 10px;
-                }
-
-                .task {
-                    padding: 12px;
-                    margin: 8px 0;
-                    font-size: 14px;
-                }
-
-                .day-progress {
-                    font-size: 14px;
-                    padding: 8px;
-                    margin-bottom: 10px;
                 }
 
                 .summary {
                     grid-column: 1 / -1;
                     position: relative;
                     bottom: auto;
-                    margin-top: 20px;
-                    display: grid;
-                    grid-template-columns: 1fr auto;
-                    gap: 20px;
-                    align-items: center;
-                }
-
-                .progress-bar {
-                    width: 300px;
-                    margin: 0;
-                }
-
-                .reset-button {
-                    width: auto;
-                    margin: 0;
-                }
-
-                /* Modal styles for landscape */
-                .modal-content {
-                    width: 90%;
-                    max-width: 1200px;
-                    max-height: 90vh;
-                    overflow-y: auto;
-                }
-
-                .todo-list {
-                    max-height: 60vh;
-                }
-
-                .emoji-picker {
-                    grid-template-columns: repeat(12, 1fr);
-                    max-height: 250px;
-                }
-
-                .task-list {
-                    max-height: 300px;
                 }
             }
-// ... existing code ...
+        }
+
         @supports (-webkit-touch-callout: none) {
             .container {
                 padding-bottom: calc(20px + var(--safe-area-inset-bottom));
@@ -965,6 +891,119 @@
 
         .calendar-date.has-todo.completed::before {
             content: '✅';
+        }
+
+        /* Landscape specific styles */
+        @media (orientation: landscape) {
+            .container {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 30px;
+                align-items: start;
+                padding: 30px;
+                max-width: 1400px;
+            }
+
+            .nav-buttons {
+                grid-column: 1 / -1;
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 15px;
+            }
+
+            .nav-button {
+                font-size: 16px;
+                padding: 12px 15px;
+                min-width: auto;
+            }
+
+            .calendar {
+                grid-column: 1 / -1;
+                margin: 0;
+            }
+
+            .day-selector {
+                grid-column: 1 / -1;
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+
+            .day-button {
+                padding: 12px 25px;
+                font-size: 16px;
+            }
+
+            #days-container {
+                grid-column: 1 / -1;
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 20px;
+            }
+
+            .day {
+                margin: 0;
+                padding: 15px;
+            }
+
+            .day h3 {
+                font-size: 18px;
+                margin-bottom: 10px;
+            }
+
+            .task {
+                padding: 12px;
+                margin: 8px 0;
+                font-size: 14px;
+            }
+
+            .day-progress {
+                font-size: 14px;
+                padding: 8px;
+                margin-bottom: 10px;
+            }
+
+            .summary {
+                grid-column: 1 / -1;
+                position: relative;
+                bottom: auto;
+                margin-top: 20px;
+                display: grid;
+                grid-template-columns: 1fr auto;
+                gap: 20px;
+                align-items: center;
+            }
+
+            .progress-bar {
+                width: 300px;
+                margin: 0;
+            }
+
+            .reset-button {
+                width: auto;
+                margin: 0;
+            }
+
+            /* Modal styles for landscape */
+            .modal-content {
+                width: 90%;
+                max-width: 1200px;
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+
+            .todo-list {
+                max-height: 60vh;
+            }
+
+            .emoji-picker {
+                grid-template-columns: repeat(12, 1fr);
+                max-height: 250px;
+            }
+
+            .task-list {
+                max-height: 300px;
+            }
         }
     </style>
 </head>
@@ -1457,7 +1496,7 @@
                 }
             }
         }
-// ... existing code ...
+
         // Add Calendar Functions
         let currentDate = new Date();
         
