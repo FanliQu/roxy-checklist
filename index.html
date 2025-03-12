@@ -500,20 +500,26 @@
         .day-selector {
             display: flex;
             gap: 10px;
-            margin-bottom: 20px;
-            overflow-x: auto;
+            margin: 20px 0;
             padding: 10px 0;
             -webkit-overflow-scrolling: touch;
+            width: 100%;
+            justify-content: space-between;
         }
 
         .day-button {
             background: var(--card-bg);
             border: 2px solid var(--secondary-color);
-            padding: 10px 20px;
+            padding: 12px 15px;
             border-radius: 20px;
             cursor: pointer;
             white-space: nowrap;
             font-family: 'Comic Neue', cursive;
+            font-size: 18px;
+            flex: 1;
+            min-width: 0;
+            text-overflow: ellipsis;
+            overflow: hidden;
         }
 
         .day-button.active {
@@ -538,12 +544,10 @@
         .calendar {
             background: white;
             border-radius: 15px;
-            padding: 12px;
-            margin: 15px 0;
-            width: 100%;
-            max-width: 400px;
-            margin-left: auto;
-            margin-right: auto;
+            padding: 15px;
+            margin: 0;
+            width: 400px;
+            flex-shrink: 0;
             box-sizing: border-box;
             display: none;
             border: 2px solid var(--secondary-color);
@@ -565,12 +569,13 @@
             justify-content: space-between;
             align-items: center;
             width: 100%;
-            padding: 0 5px;
+            padding: 0 10px;
+            margin-bottom: 10px;
         }
 
         .calendar-nav button {
-            font-size: 16px;
-            padding: 6px 12px;
+            font-size: 18px;
+            padding: 8px 15px;
             background: transparent;
             border: none;
             border-radius: 20px;
@@ -584,7 +589,7 @@
         }
 
         .calendar-nav h3 {
-            font-size: 16px;
+            font-size: 18px;
             margin: 0;
             color: var(--primary-color);
             flex: 1;
@@ -594,18 +599,17 @@
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 2px;
+            gap: 5px;
             width: 100%;
-            padding: 5px;
+            padding: 10px 5px;
         }
 
         .calendar-weekday {
-            font-size: 12px;
-            padding: 8px 2px;
+            font-size: 14px;
+            padding: 10px 5px;
             color: var(--primary-color);
             text-align: center;
             font-weight: bold;
-            opacity: 0.8;
         }
 
         .calendar-date {
@@ -613,10 +617,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
+            font-size: 16px;
             background: transparent;
-            border: none;
-            min-height: 30px;
+            min-height: 40px;
             cursor: pointer;
             transition: all 0.2s;
             position: relative;
@@ -1197,26 +1200,15 @@
             }
             
             const today = new Date();
-            const progress = storage.get('weeklyProgress');
             
             for (let day = 1; day <= totalDays; day++) {
                 const date = new Date(year, month, day);
                 const dateString = date.toISOString().split('T')[0];
-                const dayOfWeek = date.getDay();
                 const isToday = date.toDateString() === today.toDateString();
-                const dayIndex = (dayOfWeek + 6) % 7;
-                
-                const hasCompleted = progress.tasks[dayIndex]?.some(Boolean);
-                const dayTodos = todos.filter(todo => todo.date === dateString);
-                const hasTodo = dayTodos.length > 0;
-                const allTodosCompleted = hasTodo && dayTodos.every(todo => todo.completed);
                 
                 const classes = [
                     'calendar-date',
-                    isToday ? 'today' : '',
-                    hasCompleted ? 'has-completed' : '',
-                    hasTodo ? 'has-todo' : '',
-                    allTodosCompleted ? 'completed' : ''
+                    isToday ? 'today' : ''
                 ].filter(Boolean).join(' ');
                 
                 calendarHTML += `
@@ -1225,8 +1217,7 @@
                     </div>`;
             }
             
-            // Add remaining empty cells if needed
-            const totalCells = 42; // 6 rows × 7 days
+            const totalCells = 42;
             const remainingCells = totalCells - (startingDay + totalDays);
             for (let i = 0; i < remainingCells; i++) {
                 calendarHTML += '<div class="calendar-date"></div>';
